@@ -12,7 +12,6 @@ call_user_func(function () {
         "$dir/vendor/autoload.php",
         "$dir/src/vendors/autoload.php"
     ) as $file) {
-        echo $file, "\n";
         if (file_exists($file)) {
             require($file);
 
