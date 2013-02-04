@@ -1,23 +1,23 @@
 #!/usr/bin/env php
 <?php
 
-foreach (array(
-    __DIR__ . '/../vendor/autoload.php',
-    __DIR__ . '/../src/vendors/autoload.php'
-) as $file) {
-    if (file_exists($file)) {
-        require $file;
-        unset($file);
-        break;
-    }
-
-    unset($file);
-}
-
 use Herrera\Pake\Pake;
 use Herrera\Service\Process\ProcessServiceProvider;
 
 call_user_func(function () {
+    $dir = dirname(dirname($_SERVER['argv'][0]));
+
+    foreach (array(
+                 "$dir/vendor/autoload.php",
+                 "$dir/src/vendors/autoload.php"
+             ) as $file) {
+        if (file_exists($file)) {
+            require($file);
+            unset($file);
+            break;
+        }
+    }
+
     $app = new Pake('Pake', '@git_version@');
     $app->register(new ProcessServiceProvider());
 
