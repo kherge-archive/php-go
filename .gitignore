@@ -1,0 +1,8 @@
+.*
+!.gitignore
+!.travis.yml
+Pakefile
+pake.phar
+bin/phpunit
+coverage/
+src/vendors/
