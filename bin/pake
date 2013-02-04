@@ -8,14 +8,24 @@ call_user_func(function () {
     $dir = dirname(dirname($_SERVER['argv'][0]));
 
     foreach (array(
-                 "$dir/vendor/autoload.php",
-                 "$dir/src/vendors/autoload.php"
-             ) as $file) {
+        __DIR__ . '/../src/vendors/autoload.php',
+        "$dir/vendor/autoload.php",
+        "$dir/src/vendors/autoload.php"
+    ) as $file) {
+        echo $file, "\n";
         if (file_exists($file)) {
             require($file);
-            unset($file);
+
             break;
         }
+
+        unset($file);
+    }
+
+    if (false === isset($file)) {
+        echo "Unable to load Pake.\n";
+
+        exit(1);
     }
 
     $app = new Pake('Pake', '@git_version@');
