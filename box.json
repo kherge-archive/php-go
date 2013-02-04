@@ -1,0 +1,21 @@
+{
+    "alias": "pake.phar",
+    "chmod": "0755",
+    "directories": ["src/lib"],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": [
+                "phpunit",
+                "phpunit-test-case",
+                "Tests",
+                "tests"
+            ],
+            "in": "src/vendors"
+        }
+    ],
+    "git-version": "git_version",
+    "main": "bin/pake",
+    "output": "pake.phar",
+    "stub": true
+}
