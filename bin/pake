@@ -1,0 +1,43 @@
+#!/usr/bin/env php
+<?php
+
+use Herrera\Pake\Pake;
+use Herrera\Service\Process\ProcessServiceProvider;
+
+call_user_func(function () {
+    $dir = dirname(dirname($_SERVER['argv'][0]));
+
+    foreach (array(
+        __DIR__ . '/../src/vendors/autoload.php',
+        "$dir/vendor/autoload.php",
+        "$dir/src/vendors/autoload.php"
+    ) as $file) {
+        if (file_exists($file)) {
+            require($file);
+
+            break;
+        }
+
+        unset($file);
+    }
+
+    if (false === isset($file)) {
+        echo "Unable to load Pake.\n";
+
+        exit(1);
+    }
+
+    $app = new Pake('Pake', '@git_version@');
+    $app->register(new ProcessServiceProvider());
+
+    try {
+    $app->load('Pakefile');
+
+    } catch (Exception $exception) {
+        $app['console']->renderException($exception, $app['console.output']);
+
+        exit(1);
+    }
+
+    $app->run();
+});
