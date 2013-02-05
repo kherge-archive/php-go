@@ -1,4 +1,4 @@
-php-pake
-========
+Pake
+====
 
 A simple PHP build tool.
