@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Php-pake by herrera-io</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Php-pake</h1>
+        <p>A simple PHP build tool.</p>
+
+        <p class="view"><a href="https://github.com/herrera-io/php-pake">View the Project on GitHub <small>herrera-io/php-pake</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/herrera-io/php-pake/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/herrera-io/php-pake/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/herrera-io/php-pake">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Pake</h1>
+
+<p><a href="https://travis-ci.org/herrera-io/php-pake"><img src="https://travis-ci.org/herrera-io/php-pake.png?branch=master" alt="Build Status"></a></p>
+
+<p>A simple PHP build tool.</p>
+
+<h2>Summary</h2>
+
+<p>Pake is a simple build tool inspired by <a href="http://coffeescript.org/documentation/docs/cake.html">Cake</a>.</p>
+
+<h2>Installation</h2>
+
+<p>You may add Pake as a Composer dependency:</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>php composer.phar require herrera-io/pake<span class="o">=</span>1.*
+</pre></div>
+
+<p>And run it from your bin directory:</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>bin/pake
+</pre></div>
+
+<p>Or you may download it <a href="https://bitbucket.org/kherge/php-pake/downloads/pake-1.0.0.phar">as a PHAR</a>.</p>
+
+<h2>Usage</h2>
+
+<p>To use Pake, you will need to create a Pakefile:</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="nv">$task</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">,</span> <span class="s1">'Just want to say hello!'</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$output</span><span class="o">-&gt;</span><span class="na">writeln</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span>
+        <span class="s1">'Hello, &lt;info&gt;%s&lt;/info&gt;!'</span><span class="p">,</span>
+        <span class="nv">$input</span><span class="o">-&gt;</span><span class="na">getArgument</span><span class="p">(</span><span class="s1">'name'</span><span class="p">)</span> <span class="o">?:</span> <span class="s1">'Guest'</span>
+    <span class="p">));</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">addArgument</span><span class="p">(</span><span class="s1">'name'</span><span class="p">);</span>
+
+<span class="nv">$task</span><span class="p">(</span><span class="s1">'test'</span><span class="p">,</span> <span class="s1">'Test using PHPUnit'</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$pake</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$process</span> <span class="o">=</span> <span class="nv">$pake</span><span class="p">[</span><span class="s1">'process'</span><span class="p">](</span><span class="s1">'bin/phpunit'</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$process</span><span class="o">-&gt;</span><span class="na">error</span><span class="p">(</span><span class="nv">$process</span><span class="o">-&gt;</span><span class="na">stream</span><span class="p">(</span><span class="nx">STDERR</span><span class="p">))</span>
+                   <span class="o">-&gt;</span><span class="na">output</span><span class="p">(</span><span class="nv">$process</span><span class="o">-&gt;</span><span class="na">stream</span><span class="p">(</span><span class="nx">STDOUT</span><span class="p">))</span>
+                   <span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>You may then either list the available tasks by running Pake without arguments,</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>bin/pake
+Pake version 1.0.0
+
+Usage:
+  <span class="o">[</span>options<span class="o">]</span> <span class="nb">command</span> <span class="o">[</span>arguments<span class="o">]</span>
+
+Options:
+  --help           -h Display this <span class="nb">help </span>message.
+  --quiet          -q Do not output any message.
+  --verbose        -v Increase verbosity of messages.
+  --version        -V Display this application version.
+  --ansi              Force ANSI output.
+  --no-ansi           Disable ANSI output.
+  --no-interaction -n Do not ask any interactive question.
+
+Available commands:
+  hello   Just want to say hello!
+  <span class="nb">help    </span>Displays <span class="nb">help </span><span class="k">for </span>a <span class="nb">command</span>
+<span class="nb">  </span>list    Lists commands
+  <span class="nb">test    </span>Test using PHPUnit
+</pre></div>
+
+<p>display the help screen for a particular task,</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>bin/pake <span class="nb">help </span>hello
+Usage:
+ hello <span class="o">[</span>name<span class="o">]</span>
+
+Arguments:
+ name
+
+Help:
+ Just want to say hello!
+
+</pre></div>
+
+<p>or run a particular task.</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>bin/pake hello
+Hello, Guest!
+<span class="nv">$ </span>bin/pake hello User
+Hello, User!
+</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/herrera-io">herrera-io</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
