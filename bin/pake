@@ -8,15 +8,20 @@ use Herrera\Service\Process\ProcessServiceProvider;
 define('PAKE_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 
 call_user_func(function () {
+    if (file_exists('composer.json')) {
+        $composer = realpath('composer.json');
+        $dir = realpath('.') . DIRECTORY_SEPARATOR;
+    } else {
+        $composer = PAKE_DIR . '/composer.json';
+        $dir = PAKE_DIR;
+    }
 
-    $composer = json_decode(file_get_contents(
-        PAKE_DIR . "/composer.json"
-    ), true);
+    $composer = json_decode(file_get_contents($composer), true);
 
     if (isset($composer['config']['vendor-dir'])) {
-        $file = PAKE_DIR . $composer['config']['vendor-dir'] . '/autoload.php';
+        $file = $dir . $composer['config']['vendor-dir'] . '/autoload.php';
     } else {
-        $file = PAKE_DIR . 'vendor/autoload.php';
+        $file = $dir . 'vendor/autoload.php';
     }
 
     if (file_exists($file)) {
