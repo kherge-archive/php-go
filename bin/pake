@@ -4,24 +4,24 @@
 use Herrera\Pake\Pake;
 use Herrera\Service\Process\ProcessServiceProvider;
 
+// workaround not being able to use __DIR__ in a closure
+define('PAKE_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+
 call_user_func(function () {
-    $dir = dirname(dirname($_SERVER['argv'][0]));
 
-    foreach (array(
-        __DIR__ . '/../src/vendors/autoload.php',
-        "$dir/vendor/autoload.php",
-        "$dir/src/vendors/autoload.php"
-    ) as $file) {
-        if (file_exists($file)) {
-            require($file);
+    $composer = json_decode(file_get_contents(
+        PAKE_DIR . "/composer.json"
+    ), true);
 
-            break;
-        }
-
-        unset($file);
+    if (isset($composer['config']['vendor-dir'])) {
+        $file = PAKE_DIR . $composer['config']['vendor-dir'] . '/autoload.php';
+    } else {
+        $file = PAKE_DIR . 'vendor/autoload.php';
     }
 
-    if (false === isset($file)) {
+    if (file_exists($file)) {
+        require($file);
+    } else {
         echo "Unable to load Pake.\n";
 
         exit(1);

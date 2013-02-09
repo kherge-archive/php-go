@@ -2,6 +2,7 @@
     "alias": "pake.phar",
     "chmod": "0755",
     "directories": ["src/lib"],
+    "files-bin": ["composer.json"],
     "finder": [
         {
             "name": "*.php",
