@@ -25,7 +25,7 @@ And run it from your bin directory:
 $ bin/pake
 ```
 
-Or you may download it [as a PHAR](https://bitbucket.org/kherge/php-pake/downloads/pake-1.0.0.phar).
+Or you may download it [as a PHAR](https://bitbucket.org/kherge/php-pake/downloads/pake-1.1.1.phar).
 
 Usage
 -----
