@@ -36,7 +36,7 @@ call_user_func(function () {
     $app->register(new ProcessServiceProvider());
 
     try {
-    $app->load('Pakefile');
+    $app->load();
 
     } catch (Exception $exception) {
         $app['console']->renderException($exception, $app['console.output']);

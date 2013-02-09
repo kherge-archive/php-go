@@ -77,7 +77,7 @@ PAKEFILE
         );
 
         $pake = new Pake();
-        $pake->load('Pakefile');
+        $pake->load();
 
         $this->assertInstanceOf(
             'Symfony\\Component\\Console\\Command\\Command',
