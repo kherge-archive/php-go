@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\NullOutput;
 
 class PakeTest extends TestCase
 {
-    public function testInvoke()
+    public function test__Invoke()
     {
         $pake = new Pake();
         $ran = false;
@@ -30,6 +30,25 @@ class PakeTest extends TestCase
         $command->run(new ArrayInput(array('test')), new NullOutput());
 
         $this->assertTrue($ran);
+    }
+
+    /**
+     * @depends test__Invoke
+     */
+    public function testInvoke()
+    {
+        $result = null;
+        $pake = new Pake();
+
+        $pake('test', 'Just testing!', function ($input, $output) use (&$result) {
+            $result = $input->getArgument('what');
+        })->addArgument('what');
+
+        $pake->invoke('test', array(
+            'what' => 'Hello!'
+        ));
+
+        $this->assertEquals('Hello!', $result);
     }
 
     public function testLoadNoPakefile()
