@@ -5,6 +5,8 @@ Go
 
 A simple PHP build tool.
 
+> This tool used to known as Pake, but was renamed due to a naming conflict with another project, more well established project with the same goals. Please see the [original project repository](https://github.com/herrera-io/php-pake) for more information.
+
 Summary
 -------
 
