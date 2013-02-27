@@ -1,6 +1,6 @@
 <?php
 
-namespace Herrera\Pake;
+namespace Herrera\Go;
 
 use Herrera\Cli\Application;
 use InvalidArgumentException;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\ArrayInput;
  *
  * @author Kevin Herrera <kevin@herrera.io>
  */
-class Pake extends Application
+class Go extends Application
 {
     /**
      * Registers a task as a command.
@@ -53,13 +53,13 @@ class Pake extends Application
      */
     public function load()
     {
-        if (false === file_exists('Pakefile')) {
-            throw new InvalidArgumentException('No Pakefile available.');
+        if (false === file_exists('Gofile')) {
+            throw new InvalidArgumentException('No Gofile available.');
         }
 
         $pake = $this;
         $task = $this;
 
-        include 'Pakefile';
+        include 'Gofile';
     }
 }

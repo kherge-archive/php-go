@@ -2,8 +2,9 @@
 !.gitignore
 !.travis.yml
 composer.lock
-Pakefile
-pake.phar
+Gofile
+go.phar
 bin/phpunit
+bin/phpunit.bat
 coverage/
 src/vendors/

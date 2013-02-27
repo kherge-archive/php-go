@@ -1,5 +1,5 @@
 {
-    "alias": "pake.phar",
+    "alias": "go.phar",
     "chmod": "0755",
     "directories": ["src/lib"],
     "files-bin": ["composer.json"],
@@ -16,7 +16,7 @@
         }
     ],
     "git-version": "git_version",
-    "main": "bin/pake",
-    "output": "pake.phar",
+    "main": "bin/go",
+    "output": "go.phar",
     "stub": true
 }

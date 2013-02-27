@@ -1,24 +1,24 @@
 <?php
 
-namespace Herrera\Pake\Tests;
+namespace Herrera\Go\Tests;
 
-use Herrera\Pake\Pake;
+use Herrera\Go\Go;
 use Herrera\PHPUnit\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
-class PakeTest extends TestCase
+class GoTest extends TestCase
 {
     public function test__Invoke()
     {
-        $pake = new Pake();
+        $go = new Go();
         $ran = false;
 
-        $pake('test', 'Testing', function () use (&$ran) {
+        $go('test', 'Testing', function () use (&$ran) {
             $ran = true;
         });
 
-        $command = $pake['console']->find('test');
+        $command = $go['console']->find('test');
 
         $this->assertInstanceOf(
             'Symfony\\Component\\Console\\Command\\Command',
@@ -38,50 +38,50 @@ class PakeTest extends TestCase
     public function testInvoke()
     {
         $result = null;
-        $pake = new Pake();
+        $go = new Go();
 
-        $pake('test', 'Just testing!', function ($input, $output) use (&$result) {
+        $go('test', 'Just testing!', function ($input, $output) use (&$result) {
             $result = $input->getArgument('what');
         })->addArgument('what');
 
-        $pake->invoke('test', array(
+        $go->invoke('test', array(
             'what' => 'Hello!'
         ));
 
         $this->assertEquals('Hello!', $result);
     }
 
-    public function testLoadNoPakefile()
+    public function testLoadNoGofile()
     {
         chdir($this->createDir());
 
-        $pake = new Pake();
+        $go = new Go();
 
         $this->setExpectedException(
             'InvalidArgumentException',
-            'No Pakefile available.'
+            'No Gofile available.'
         );
 
-        $pake->load('Pakefile');
+        $go->load('Gofile');
     }
 
     public function testLoad()
     {
         chdir($this->createDir());
 
-        file_put_contents('Pakefile', <<<PAKEFILE
+        file_put_contents('Gofile', <<<PAKEFILE
 <?php
 
 \$task('test', 'Test task', function () {});
 PAKEFILE
         );
 
-        $pake = new Pake();
-        $pake->load();
+        $go = new Go();
+        $go->load();
 
         $this->assertInstanceOf(
             'Symfony\\Component\\Console\\Command\\Command',
-            $pake['console']->find('test')
+            $go['console']->find('test')
         );
     }
 }

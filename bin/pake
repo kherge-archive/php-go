@@ -1,19 +1,19 @@
 #!/usr/bin/env php
 <?php
 
-use Herrera\Pake\Pake;
+use Herrera\Go\Go;
 use Herrera\Service\Process\ProcessServiceProvider;
 
 // workaround not being able to use __DIR__ in a closure
-define('PAKE_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+define('GO_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 
 call_user_func(function () {
     if (file_exists('composer.json')) {
         $composer = realpath('composer.json');
         $dir = realpath('.') . DIRECTORY_SEPARATOR;
     } else {
-        $composer = PAKE_DIR . '/composer.json';
-        $dir = PAKE_DIR;
+        $composer = GO_DIR . '/composer.json';
+        $dir = GO_DIR;
     }
 
     $composer = json_decode(file_get_contents($composer), true);
@@ -27,12 +27,12 @@ call_user_func(function () {
     if (file_exists($file)) {
         require($file);
     } else {
-        echo "Unable to load Pake.\n";
+        echo "Unable to load Go.\n";
 
         exit(1);
     }
 
-    $app = new Pake('Pake', '@git_version@');
+    $app = new Go('Go', '@git_version@');
     $app->register(new ProcessServiceProvider());
 
     try {

@@ -1,36 +1,36 @@
-Pake
+Go
 ====
 
-[![Build Status](https://travis-ci.org/herrera-io/php-pake.png?branch=master)](https://travis-ci.org/herrera-io/php-pake)
+[![Build Status](https://travis-ci.org/herrera-io/php-go.png?branch=master)](https://travis-ci.org/herrera-io/php-go)
 
 A simple PHP build tool.
 
 Summary
 -------
 
-Pake is a simple build tool inspired by [Cake](http://coffeescript.org/documentation/docs/cake.html).
+Go is a simple build tool inspired by [Cake](http://coffeescript.org/documentation/docs/cake.html).
 
 Installation
 ------------
 
-You may add Pake as a Composer dependency:
+You may add Go as a Composer dependency:
 
 ```sh
-$ php composer.phar require herrera-io/pake=1.*
+$ php composer.phar require herrera-io/go=1.*
 ```
 
 And run it from your bin directory:
 
 ```sh
-$ bin/pake
+$ bin/go
 ```
 
-Or you may download it [as a PHAR](https://bitbucket.org/kherge/php-pake/downloads/).
+Or you may download it [as a PHAR](https://bitbucket.org/kherge/php-go/downloads/).
 
 Usage
 -----
 
-To use Pake, you will need to create a Pakefile:
+To use Go, you will need to create a Gofile:
 
 ```php
 <?php
@@ -42,8 +42,8 @@ $task('hello', 'Just want to say hello!', function ($input, $output) {
     ));
 })->addArgument('name');
 
-$task('test', 'Test using PHPUnit', function () use ($pake) {
-    $process = $pake['process']('bin/phpunit');
+$task('test', 'Test using PHPUnit', function () use ($go) {
+    $process = $go['process']('bin/phpunit');
 
     return $process->error($process->stream(STDERR))
                    ->output($process->stream(STDOUT))
@@ -51,11 +51,11 @@ $task('test', 'Test using PHPUnit', function () use ($pake) {
 });
 ```
 
-You may then either list the available tasks by running Pake without arguments,
+You may then either list the available tasks by running Go without arguments,
 
 ```sh
-$ bin/pake
-Pake version 1.0.0
+$ bin/go
+Go version 1.0.0
 
 Usage:
   [options] command [arguments]
@@ -79,7 +79,7 @@ Available commands:
 display the help screen for a particular task,
 
 ```sh
-$ bin/pake help hello
+$ bin/go help hello
 Usage:
  hello [name]
 
@@ -94,8 +94,8 @@ Help:
 or run a particular task.
 
 ```sh
-$ bin/pake hello
+$ bin/go hello
 Hello, Guest!
-$ bin/pake hello User
+$ bin/go hello User
 Hello, User!
 ```
