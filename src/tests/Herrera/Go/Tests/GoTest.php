@@ -72,7 +72,7 @@ class GoTest extends TestCase
         file_put_contents('Gofile', <<<PAKEFILE
 <?php
 
-\$task('test', 'Test task', function () {});
+\$task('test', 'Test task', function () use (\$go) {});
 PAKEFILE
         );
 

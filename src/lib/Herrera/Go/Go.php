@@ -57,7 +57,7 @@ class Go extends Application
             throw new InvalidArgumentException('No Gofile available.');
         }
 
-        $pake = $this;
+        $go = $this;
         $task = $this;
 
         include 'Gofile';
