@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Pake by herrera-io</title>
+    <title>Go by herrera-io</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,46 +15,50 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Pake</h1>
+        <h1>Go</h1>
         <p>A simple PHP build tool.</p>
 
-        <p class="view"><a href="https://github.com/herrera-io/php-pake">View the Project on GitHub <small>herrera-io/php-pake</small></a></p>
+        <p class="view"><a href="https://github.com/herrera-io/php-go">View the Project on GitHub <small>herrera-io/php-go</small></a></p>
 
 
         <ul>
-          <li><a href="https://github.com/herrera-io/php-pake/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/herrera-io/php-pake/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/herrera-io/php-pake">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/herrera-io/php-go/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/herrera-io/php-go/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/herrera-io/php-go">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
-        <h1>Pake</h1>
+        <h1>Go</h1>
 
-<p><a href="https://travis-ci.org/herrera-io/php-pake"><img src="https://travis-ci.org/herrera-io/php-pake.png?branch=master" alt="Build Status"></a></p>
+<p><a href="https://travis-ci.org/herrera-io/php-go"><img src="https://travis-ci.org/herrera-io/php-go.png?branch=master" alt="Build Status"></a></p>
 
 <p>A simple PHP build tool.</p>
 
+<blockquote>
+<p>This tool used to known as Pake, but was renamed due to a naming conflict with another project, more well established project with the same goals. Please see the <a href="https://github.com/herrera-io/php-pake">original project repository</a> for more information.</p>
+</blockquote>
+
 <h2>Summary</h2>
 
-<p>Pake is a simple build tool inspired by <a href="http://coffeescript.org/documentation/docs/cake.html">Cake</a>.</p>
+<p>Go is a simple build tool inspired by <a href="http://coffeescript.org/documentation/docs/cake.html">Cake</a>.</p>
 
 <h2>Installation</h2>
 
-<p>You may add Pake as a Composer dependency:</p>
+<p>You may add Go as a Composer dependency:</p>
 
-<div class="highlight"><pre><span class="nv">$ </span>php composer.phar require herrera-io/pake<span class="o">=</span>1.*
+<div class="highlight"><pre><span class="nv">$ </span>php composer.phar require herrera-io/go<span class="o">=</span>1.*
 </pre></div>
 
 <p>And run it from your bin directory:</p>
 
-<div class="highlight"><pre><span class="nv">$ </span>bin/pake
+<div class="highlight"><pre><span class="nv">$ </span>bin/go
 </pre></div>
 
-<p>Or you may download it <a href="https://bitbucket.org/kherge/php-pake/downloads/pake-1.0.0.phar">as a PHAR</a>.</p>
+<p>Or you may download it <a href="https://bitbucket.org/kherge/php-go/downloads/">as a PHAR</a>.</p>
 
 <h2>Usage</h2>
 
-<p>To use Pake, you will need to create a Pakefile:</p>
+<p>To use Go, you will need to create a Gofile:</p>
 
 <div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
 
@@ -65,8 +69,8 @@
     <span class="p">));</span>
 <span class="p">})</span><span class="o">-&gt;</span><span class="na">addArgument</span><span class="p">(</span><span class="s1">'name'</span><span class="p">);</span>
 
-<span class="nv">$task</span><span class="p">(</span><span class="s1">'test'</span><span class="p">,</span> <span class="s1">'Test using PHPUnit'</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$pake</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$process</span> <span class="o">=</span> <span class="nv">$pake</span><span class="p">[</span><span class="s1">'process'</span><span class="p">](</span><span class="s1">'bin/phpunit'</span><span class="p">);</span>
+<span class="nv">$task</span><span class="p">(</span><span class="s1">'test'</span><span class="p">,</span> <span class="s1">'Test using PHPUnit'</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$go</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$process</span> <span class="o">=</span> <span class="nv">$go</span><span class="p">[</span><span class="s1">'process'</span><span class="p">](</span><span class="s1">'bin/phpunit'</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="nv">$process</span><span class="o">-&gt;</span><span class="na">error</span><span class="p">(</span><span class="nv">$process</span><span class="o">-&gt;</span><span class="na">stream</span><span class="p">(</span><span class="nx">STDERR</span><span class="p">))</span>
                    <span class="o">-&gt;</span><span class="na">output</span><span class="p">(</span><span class="nv">$process</span><span class="o">-&gt;</span><span class="na">stream</span><span class="p">(</span><span class="nx">STDOUT</span><span class="p">))</span>
@@ -74,10 +78,10 @@
 <span class="p">});</span>
 </pre></div>
 
-<p>You may then either list the available tasks by running Pake without arguments,</p>
+<p>You may then either list the available tasks by running Go without arguments,</p>
 
-<div class="highlight"><pre><span class="nv">$ </span>bin/pake
-Pake version 1.0.0
+<div class="highlight"><pre><span class="nv">$ </span>bin/go
+Go version 1.0.0
 
 Usage:
   <span class="o">[</span>options<span class="o">]</span> <span class="nb">command</span> <span class="o">[</span>arguments<span class="o">]</span>
@@ -100,7 +104,7 @@ Available commands:
 
 <p>display the help screen for a particular task,</p>
 
-<div class="highlight"><pre><span class="nv">$ </span>bin/pake <span class="nb">help </span>hello
+<div class="highlight"><pre><span class="nv">$ </span>bin/go <span class="nb">help </span>hello
 Usage:
  hello <span class="o">[</span>name<span class="o">]</span>
 
@@ -114,9 +118,9 @@ Help:
 
 <p>or run a particular task.</p>
 
-<div class="highlight"><pre><span class="nv">$ </span>bin/pake hello
+<div class="highlight"><pre><span class="nv">$ </span>bin/go hello
 Hello, Guest!
-<span class="nv">$ </span>bin/pake hello User
+<span class="nv">$ </span>bin/go hello User
 Hello, User!
 </pre></div>
       </section>
