@@ -17,6 +17,7 @@
     "require": {
         "php": ">=5.3.3",
         "herrera-io/cli-app": "1.*",
+        "herrera-io/service-update": "1.*",
         "herrera-io/service-process": "1.*"
     },
     "require-dev": {
