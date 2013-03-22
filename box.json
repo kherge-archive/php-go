@@ -1,7 +1,14 @@
 {
     "alias": "go.phar",
     "chmod": "0755",
+    "compactors": [
+        "Herrera\\Box\\Compactor\\Composer",
+        "Herrera\\Box\\Compactor\\Json"
+    ],
     "directories": ["src/lib"],
+    "files": [
+        "src/vendors/herrera-io/phar-update/res/schema.json"
+    ],
     "files-bin": ["composer.json"],
     "finder": [
         {
