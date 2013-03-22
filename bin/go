@@ -4,45 +4,93 @@
 use Herrera\Go\Go;
 use Herrera\Service\Process\ProcessServiceProvider;
 
-// workaround not being able to use __DIR__ in a closure
-define('GO_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+if ($uri = Phar::running()) {
+    require "$uri/src/vendors/autoload.php";
+} else {
+    load_composer_classloader($_SERVER['argv'][0]);
+}
 
-call_user_func(function () {
-    if (file_exists('composer.json')) {
-        $composer = realpath('composer.json');
-        $dir = realpath('.') . DIRECTORY_SEPARATOR;
-    } else {
-        $composer = GO_DIR . '/composer.json';
-        $dir = GO_DIR;
-    }
+$app = new Herrera\Go\Go('Go', '@git_version@');
+$app->register(new Herrera\Service\Process\ProcessServiceProvider());
 
-    $composer = json_decode(file_get_contents($composer), true);
-
-    if (isset($composer['config']['vendor-dir'])) {
-        $file = $dir . $composer['config']['vendor-dir'] . '/autoload.php';
-    } else {
-        $file = $dir . 'vendor/autoload.php';
-    }
-
-    if (file_exists($file)) {
-        require($file);
-    } else {
-        echo "Unable to load Go.\n";
-
-        exit(1);
-    }
-
-    $app = new Go('Go', '@git_version@');
-    $app->register(new ProcessServiceProvider());
-
-    try {
+try {
     $app->load();
+} catch (Exception $exception) {
+    $app['console']->renderException($exception, $app['console.output']);
 
-    } catch (Exception $exception) {
-        $app['console']->renderException($exception, $app['console.output']);
+    exit(1);
+}
 
-        exit(1);
+$app->run();
+
+/**
+ * Finds the Composer autoloader and returns it.
+ *
+ * @param null $dir  The starting directory.
+ * @param int  $skip The number of occurrences to skip.
+ *
+ * @return Composer\Autoload\ClassLoader The class loader.
+ *
+ * @throws RuntimeException If the loader could not be loaded.
+ */
+function load_composer_classloader($dir = null, $skip = 0)
+{
+    $up = $dir;
+    $skips = 0;
+
+    do {
+        $dir = $up;
+
+        if (file_exists("$dir/composer.json")) {
+            if ($skip > $skips) {
+                $skips++;
+
+                continue;
+            }
+
+            $path = realpath("$dir/composer.json");
+        }
+    } while ($dir !== ($up = dirname($dir)));
+
+    if (empty($path)) {
+        throw new RuntimeException (
+            'The composer.json file could not be found.'
+        );
     }
 
-    $app->run();
-});
+    if (false === ($json = file_get_contents($path))) {
+        throw new RuntimeException(sprintf(
+            'The file "%s" could not be read.',
+            $path
+        ));
+    }
+
+    $json = json_decode($json);
+
+    if (JSON_ERROR_NONE !== ($code = json_last_error())) {
+        throw new RuntimeException(sprintf(
+            'The file "%s" could not be parsed [%d].',
+            $path,
+            $code
+        ));
+    }
+
+    $path = dirname($path);
+
+    if (isset($json->config) && isset($json->config->{'vendor-dir'})) {
+        $path .= DIRECTORY_SEPARATOR . $json->config->{'vendor-dir'};
+    } else {
+        $path .= DIRECTORY_SEPARATOR . 'vendor';
+    }
+
+    $path .= DIRECTORY_SEPARATOR . 'autoload.php';
+
+    if (false === file_exists($path)) {
+        throw RuntimeException::create(
+            'The Composer class loader "%s" could not be found.',
+            $path
+        );
+    }
+
+    return include $path;
+}
