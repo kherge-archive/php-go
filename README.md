@@ -29,6 +29,15 @@ $ bin/go
 
 Or you may download it [as a PHAR](https://bitbucket.org/kherge/php-go/downloads/).
 
+Phar
+----
+
+To build your own Phar for Go, you will need to use [Box](http://box-project.org/):
+
+```sh
+$ php box.phar build
+```
+
 Usage
 -----
 
