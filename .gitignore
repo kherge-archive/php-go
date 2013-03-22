@@ -3,7 +3,7 @@
 !.travis.yml
 composer.lock
 Gofile
-go.phar
+*.phar
 bin/
 !bin/go*
 coverage/
