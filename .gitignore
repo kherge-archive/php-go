@@ -4,7 +4,7 @@
 composer.lock
 Gofile
 go.phar
-bin/phpunit
-bin/phpunit.bat
+bin/
+!bin/go*
 coverage/
 src/vendors/
