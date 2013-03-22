@@ -1,6 +1,7 @@
 .*
 !.gitignore
 !.travis.yml
+*.phar
 composer.lock
 Gofile
 go.phar
