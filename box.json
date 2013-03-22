@@ -10,7 +10,8 @@
                 "phpunit",
                 "phpunit-test-case",
                 "Tests",
-                "tests"
+                "tests",
+                "yaml"
             ],
             "in": "src/vendors"
         }
