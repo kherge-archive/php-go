@@ -1,0 +1,10 @@
+.*
+!.gitignore
+!.travis.yml
+composer.lock
+Gofile
+go.phar
+bin/
+!bin/go*
+coverage/
+src/vendors/
