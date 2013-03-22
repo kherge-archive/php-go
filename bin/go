@@ -7,7 +7,7 @@ use Herrera\Service\Process\ProcessServiceProvider;
 if ($uri = Phar::running()) {
     require "$uri/src/vendors/autoload.php";
 } else {
-    load_composer_classloader($_SERVER['argv'][0]);
+    load_composer_classloader(realpath($_SERVER['argv'][0]));
 }
 
 $app = new Herrera\Go\Go('Go', '@git_version@');
