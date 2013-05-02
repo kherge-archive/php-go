@@ -31,9 +31,10 @@ class Go extends Application
      */
     public function __invoke($name, $description, $callback)
     {
-        return $this->add($name, $callback)
-                    ->setDescription($description)
-                    ->setHelp($description);
+        return $this
+            ->add($name, $callback)
+            ->setDescription($description)
+            ->setHelp($description);
     }
 
     /**
@@ -53,28 +54,34 @@ class Go extends Application
         $console = $go['console'];
 
         if (('@' . 'git_version@') !== $console->getVersion()) {
-            $go->register(new UpdateServiceProvider(), array(
-                'update.url' => '@manifest_url@'
-            ));
+            $go->register(
+                new UpdateServiceProvider(),
+                array(
+                    'update.url' => '@manifest_url@'
+                )
+            );
+
+            $update = $go(
+                'update',
+                'Updates the application.',
+                function (InputInterface $input, OutputInterface $output) use ($go) {
+                    $output->writeln('Looking for updates...');
+
+                    $updated = $go['update'](
+                        $go['console']->getVersion(),
+                        (false === $input->getOption('upgrade')),
+                        $input->getOption('pre')
+                    );
+
+                    if ($updated) {
+                        $output->writeln('<info>Update successful!</info>');
+                    } else {
+                        $output->writeln('<comment>Already up-to-date.</comment>');
+                    }
+                }
+            );
 
             /** @var $update Command */
-            $update = $go('update', 'Updates the application.', function (
-                InputInterface $input,
-                OutputInterface $output
-            ) use ($go) {
-                $output->writeln('Looking for updates...');
-
-                if ($go['update'](
-                    $go['console']->getVersion(),
-                    (false === $input->getOption('upgrade')),
-                    $input->getOption('pre')
-                )){
-                    $output->writeln('<info>Update successful!</info>');
-                } else {
-                    $output->writeln('<comment>Already up-to-date.</comment>');
-                }
-            });
-
             $update->addOption(
                 'pre',
                 'p',

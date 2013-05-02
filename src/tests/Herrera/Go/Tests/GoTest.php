@@ -5,6 +5,7 @@ namespace Herrera\Go\Tests;
 use Herrera\Go\Go;
 use Herrera\PHPUnit\TestCase;
 use Phar;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
@@ -47,14 +48,18 @@ class GoTest extends TestCase
     {
         $result = null;
         $go = new Go();
+        $test = $go(
+            'test',
+            'Just testing!',
+            function ($input) use (&$result) {
+                $result = $input->getArgument('what');
+            }
+        );
 
-        $go('test', 'Just testing!', function ($input, $output) use (&$result) {
-            $result = $input->getArgument('what');
-        })->addArgument('what');
+        /** @var $test Command */
+        $test->addArgument('what');
 
-        $go->invoke('test', array(
-            'what' => 'Hello!'
-        ));
+        $go->invoke('test', array('what' => 'Hello!'));
 
         $this->assertEquals('Hello!', $result);
     }
@@ -77,7 +82,9 @@ class GoTest extends TestCase
     {
         chdir($this->createDir());
 
-        file_put_contents('Gofile', <<<PAKEFILE
+        file_put_contents(
+            'Gofile',
+            <<<PAKEFILE
 <?php
 
 \$task('test', 'Test task', function () use (\$go) {});
@@ -115,20 +122,25 @@ PAKEFILE
 
         unset($phar);
 
-        file_put_contents($manifest, json_encode(array(
-            array(
-                'name' => 'go.phar',
-                'sha1' => sha1_file($update),
-                'url' => "file://$update",
-                'version' => '1.0.0-alpha.1'
-            ),
-            array(
-                'name' => 'go.phar',
-                'sha1' => sha1_file($update),
-                'url' => "file://$update",
-                'version' => '2.0.0-alpha.1'
+        file_put_contents(
+            $manifest,
+            json_encode(
+                array(
+                    array(
+                        'name' => 'go.phar',
+                        'sha1' => sha1_file($update),
+                        'url' => "file://$update",
+                        'version' => '1.0.0-alpha.1'
+                    ),
+                    array(
+                        'name' => 'go.phar',
+                        'sha1' => sha1_file($update),
+                        'url' => "file://$update",
+                        'version' => '2.0.0-alpha.1'
+                    )
+                )
             )
-        )));
+        );
 
         $_SERVER['argv'][0] = $current;
 
@@ -143,11 +155,13 @@ PAKEFILE
         $this->assertEquals('1', exec('php ' . escapeshellarg($current)));
 
         $go['console']->run(
-            new ArrayInput(array(
-                'command' => 'update',
-                '--upgrade' => true,
-                '--pre' => true
-            )),
+            new ArrayInput(
+                array(
+                    'command' => 'update',
+                    '--upgrade' => true,
+                    '--pre' => true
+                )
+            ),
             new NullOutput()
         );
 
