@@ -3,12 +3,11 @@
 namespace Herrera\Go;
 
 use Herrera\Cli\Application;
-use Herrera\Service\Process\ProcessServiceProvider;
+use Herrera\Go\Command\ListCommand;
 use Herrera\Service\Update\UpdateServiceProvider;
-use InvalidArgumentException;
 use Symfony\Component\Console\Application as Console;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,115 +20,120 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Go extends Application
 {
     /**
-     * Registers a task as a command.
+     * The application singleton.
      *
-     * @param string   $name        The name.
-     * @param string   $description The description.
-     * @param callable $callback    The callback.
-     *
-     * @return Command The task command.
+     * @var Go
      */
-    public function __invoke($name, $description, $callback)
-    {
-        return $this
-            ->add($name, $callback)
-            ->setDescription($description)
-            ->setHelp($description);
-    }
+    private static $instance;
 
     /**
-     * Creates a new, configured instance of Go.
-     *
-     * @param string $name    The application name.
-     * @param string $version The application version.
-     *
-     * @return Go The new instance.
+     * @override
      */
-    public static function create($name = 'Go', $version = '@git_version@')
+    public function __construct($name = 'Go', $version = '@git_version@')
     {
-        $go = new self($name, $version);
-        $go->register(new ProcessServiceProvider());
+        parent::__construct($name, $version);
 
         /** @var $console Console */
-        $console = $go['console'];
-
-        if (('@' . 'git_version@') !== $console->getVersion()) {
-            $go->register(
-                new UpdateServiceProvider(),
-                array(
-                    'update.url' => '@manifest_url@'
-                )
-            );
-
-            $update = $go(
-                'update',
-                'Updates the application.',
-                function (InputInterface $input, OutputInterface $output) use ($go) {
-                    $output->writeln('Looking for updates...');
-
-                    $updated = $go['update'](
-                        $go['console']->getVersion(),
-                        (false === $input->getOption('upgrade')),
-                        $input->getOption('pre')
-                    );
-
-                    if ($updated) {
-                        $output->writeln('<info>Update successful!</info>');
-                    } else {
-                        $output->writeln('<comment>Already up-to-date.</comment>');
-                    }
-                }
-            );
-
-            /** @var $update Command */
-            $update->addOption(
-                'pre',
-                'p',
-                InputOption::VALUE_NONE,
-                'Allow pre-release updates.'
-            );
-
-            $update->addOption(
-                'upgrade',
-                'u',
-                InputOption::VALUE_NONE,
-                'Upgrade to next major release, if available.'
-            );
-        }
-
-        return $go;
+        $console = $this['console'];
+        $console->add(new ListCommand());
     }
 
     /**
-     * Invokes a task command.
-     *
-     * @param string $name The name.
-     * @param array  $args The arguments.
-     *
-     * @return integer The exit status code.
+     * @override
      */
-    public function invoke($name, array $args = array())
+    public function add($name, $callback)
     {
-        $args['command'] = $name;
+        return $this['go.last_task'] = parent::add($name, $callback);
+    }
 
-        return $this['console']->find($name)->run(
-            new ArrayInput($args),
-            $this['console.output']
+    /**
+     * Returns the application singleton.
+     *
+     * @param string $key A service or parameter key.
+     *
+     * @return Go The application singleton.
+     */
+    public static function get($key = null)
+    {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+
+        return $key ? self::$instance[$key] : self::$instance;
+    }
+
+    /**
+     * Allows the application to be updated.
+     *
+     * @return Go The application.
+     */
+    public function registerUpdater()
+    {
+        $this->register(
+            new UpdateServiceProvider(),
+            array('update_url' => '@manifest_url@')
         );
+
+        $app = $this;
+        $command = $this->add(
+            'update',
+            function (
+                InputInterface $input,
+                OutputInterface $output
+            ) use ($app) {
+                $output->writeln('Looking for updates...');
+
+                /** @var $updated Console */
+                $console = $app['console'];
+                $updated = $app['update'](
+                    $console->getVersion(),
+                    !$input->getOption('upgrade'),
+                    $input->getOption('pre-release')
+                );
+
+                if ($updated) {
+                    $output->writeln('<info>Updated successfully.</info>');
+                } else {
+                    $output->writeln('<comment>Already up-to-date.</comment>');
+                }
+            }
+        );
+
+        $command->addOption(
+            'pre-release',
+            'p',
+            InputOption::VALUE_NONE,
+            'Allow pre-release updates.'
+        );
+
+        $command->addOption(
+            'upgrade',
+            'u',
+            InputOption::VALUE_NONE,
+            'Allow upgrade to next major release.'
+        );
+
+        return $this;
     }
 
     /**
-     * Loads the task file.
+     * @override
      */
-    public function load()
+    public function run()
     {
-        if (false === file_exists('Gofile')) {
-            throw new InvalidArgumentException('No Gofile available.');
+        /** @var $input ArgvInput */
+        $input = $this['console.input'];
+
+        switch ($input->getFirstArgument()) {
+            case 'help':
+            case 'list':
+                break;
+            default:
+                if (file_exists('Gofile')) {
+                    require 'Gofile';
+                }
         }
 
-        $go = $this;
-        $task = $this;
-
-        include 'Gofile';
+        return parent::run();
     }
 }

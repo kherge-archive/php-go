@@ -3,168 +3,158 @@
 namespace Herrera\Go\Tests;
 
 use Herrera\Go\Go;
-use Herrera\PHPUnit\TestCase;
+use Herrera\Go\Test\TestCase;
 use Phar;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
 
 class GoTest extends TestCase
 {
-    public function test__Invoke()
+    public function testConstruct()
     {
-        $go = new Go();
-        $ran = false;
+        $console = $this->getConsole();
 
-        $go('test', 'Testing', function () use (&$ran) {
-            $ran = true;
-        });
-
-        $command = $go['console']->find('test');
+        $this->assertEquals('Go', $console->getName());
+        $this->assertEquals('@git_version@', $console->getVersion());
 
         $this->assertInstanceOf(
-            'Symfony\\Component\\Console\\Command\\Command',
-            $command
+            'Herrera\\Go\\Command\\ListCommand',
+            $console->find('list')
         );
-        $this->assertEquals('test', $command->getName());
-        $this->assertEquals('Testing', $command->getDescription());
-
-        $command->run(new ArrayInput(array('test')), new NullOutput());
-
-        $this->assertTrue($ran);
     }
 
-    public function testCreate()
+    public function testAdd()
     {
-        $go = Go::create();
-
-        $this->assertInstanceOf('Herrera\\Go\\Go', $go);
-    }
-
-    /**
-     * @depends test__Invoke
-     */
-    public function testInvoke()
-    {
-        $result = null;
-        $go = new Go();
-        $test = $go(
+        $command = $this->go->add(
             'test',
-            'Just testing!',
-            function ($input) use (&$result) {
-                $result = $input->getArgument('what');
+            function () {
             }
         );
 
-        /** @var $test Command */
-        $test->addArgument('what');
-
-        $go->invoke('test', array('what' => 'Hello!'));
-
-        $this->assertEquals('Hello!', $result);
+        $this->assertSame($command, $this->go['go.last_task']);
     }
 
-    public function testLoadNoGofile()
+    public function testGetWithKey()
     {
-        chdir($this->createDir());
+        $this->assertSame($this->go['console'], Go::get('console'));
+    }
 
-        $go = new Go();
+    public function testGetWithoutKey()
+    {
+        $this->setPropertyValue(get_class($this->go), 'instance', null);
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'No Gofile available.'
+        $this->assertSame(Go::get(), Go::get());
+    }
+
+    public function testRegisterUpdater()
+    {
+        $this->go->registerUpdater();
+
+        $this->assertTrue(isset($this->go['update']));
+
+        $command = $this->getConsole()->find('update');
+
+        $this->assertNotNull($command);
+
+        $def = $command->getDefinition();
+
+        $this->assertTrue($def->hasOption('pre-release'));
+        $this->assertTrue($def->hasOption('upgrade'));
+    }
+
+    public function testRegisterUpdaterRun()
+    {
+        $this->setUpFakeUpdate();
+
+        $this->setArguments(
+            array(
+                'command' => 'update',
+                '--pre-release' => true,
+                '--upgrade' => true
+            )
         );
 
-        $go->load('Gofile');
+        $this->go->registerUpdater();
+
+        $status = $this->go->run();
+
+        $this->assertEquals(
+            "Looking for updates...\nUpdated successfully.\n",
+            $this->getOutput()
+        );
+        $this->assertSame(0, $status);
+
+        $this->getConsole()->setVersion('2.0.0');
+
+        $this->clearOutput();
+
+        $status = $this->go->run();
+
+        $this->assertEquals(
+            "Looking for updates...\nAlready up-to-date.\n",
+            $this->getOutput()
+        );
+        $this->assertSame(0, $status);
     }
 
-    public function testLoad()
+    public function testRunWithTasks()
     {
-        chdir($this->createDir());
-
         file_put_contents(
             'Gofile',
-            <<<PAKEFILE
-<?php
-
-\$task('test', 'Test task', function () use (\$go) {});
-PAKEFILE
+            '<?php task("test", "A test task", function () {});'
         );
 
-        $go = new Go();
-        $go->load();
+        $status = $this->go->run();
 
-        $this->assertInstanceOf(
-            'Symfony\\Component\\Console\\Command\\Command',
-            $go['console']->find('test')
+        $this->assertRegExp(
+            '/A test task/',
+            $this->getOutput()
         );
+        $this->assertSame(0, $status);
     }
 
-    /**
-     * @depends testCreate
-     */
-    public function testUpdate()
+    public function testRunWithoutTasks()
     {
-        $manifest = $this->createFile();
+        $this->setArguments(
+            array(
+                'command' => 'help',
+                '--version' => true
+            )
+        );
 
-        unlink($current = $this->createFile('go.phar'));
-        unlink($update = $this->createFile('go.phar'));
+        $status = $this->go->run();
 
-        $phar = new Phar($current);
-        $phar->addFromString('test.php', '<?php echo 1;');
-        $phar->setStub($phar->createDefaultStub('test.php'));
+        $this->assertEquals(
+            "Go version @git_version@\n",
+            $this->getOutput()
+        );
+        $this->assertSame(0, $status);
+    }
 
-        unset($phar);
+    private function setUpFakeUpdate()
+    {
+        touch($_SERVER['argv'][0] = 'test.phar');
 
-        $phar = new Phar($update);
-        $phar->addFromString('test.php', '<?php echo 2;');
-        $phar->setStub($phar->createDefaultStub('test.php'));
+        $phar = new Phar('update.phar');
+        $phar->addFromString('test.php', 'echo "Hello, world!\n";"');
+        $phar->setStub('<?php require "test.php"; __HALT_COMPILER();');
 
         unset($phar);
 
         file_put_contents(
-            $manifest,
+            'update.json',
             json_encode(
                 array(
                     array(
-                        'name' => 'go.phar',
-                        'sha1' => sha1_file($update),
-                        'url' => "file://$update",
-                        'version' => '1.0.0-alpha.1'
-                    ),
-                    array(
-                        'name' => 'go.phar',
-                        'sha1' => sha1_file($update),
-                        'url' => "file://$update",
-                        'version' => '2.0.0-alpha.1'
+                        'name' => 'update.phar',
+                        'sha1' => sha1_file('update.phar'),
+                        'url' => 'update.phar',
+                        'version' => '2.0.0'
                     )
                 )
             )
         );
 
-        $_SERVER['argv'][0] = $current;
+        $this->go['update.url'] = 'update.json';
 
-        $go = Go::create('Test', '1.0.0');
-        $go['update.url'] = "file://$manifest";
-        $go['console']->setAutoExit(false);
-        $go['console']->run(
-            new ArrayInput(array('command' => 'update')),
-            new NullOutput()
-        );
-
-        $this->assertEquals('1', exec('php ' . escapeshellarg($current)));
-
-        $go['console']->run(
-            new ArrayInput(
-                array(
-                    'command' => 'update',
-                    '--upgrade' => true,
-                    '--pre' => true
-                )
-            ),
-            new NullOutput()
-        );
-
-        $this->assertEquals('2', exec('php ' . escapeshellarg($current)));
+        $this->getConsole()->setVersion('1.0.0');
     }
 }

@@ -9,17 +9,13 @@ if ($uri = Phar::running()) {
     load_composer_classloader(realpath($_SERVER['argv'][0]));
 }
 
-$app = Go::create();
+$go = Go::get();
 
-try {
-    $app->load();
-} catch (Exception $exception) {
-    $app['console']->renderException($exception, $app['console.output']);
-
-    exit(1);
+if ($uri) {
+    $go->registerUpdater();
 }
 
-$app->run();
+$go->run();
 
 /**
  * Finds the Composer autoloader and returns it.

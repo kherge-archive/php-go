@@ -17,14 +17,16 @@
     "require": {
         "php": ">=5.3.3",
         "herrera-io/cli-app": "1.*",
-        "herrera-io/service-update": "1.*",
-        "herrera-io/service-process": "1.*"
+        "herrera-io/service-update": "1.*"
     },
     "require-dev": {
+        "ext-phar": "*",
         "herrera-io/phpunit-test-case": "1.*",
+        "herrera-io/service-process": "1.*",
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
+        "files": ["src/lib/functions.php"],
         "psr-0": {
             "Herrera\\Go": "src/lib"
         }
@@ -35,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "2.0-dev"
         }
     },
     "bin": ["bin/go"]
