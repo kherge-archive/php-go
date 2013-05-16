@@ -3,7 +3,6 @@
 !.travis.yml
 *.phar
 composer.lock
-Gofile
 go.phar
 bin/
 !bin/go*
