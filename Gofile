@@ -1,0 +1,47 @@
+<?php
+
+use Herrera\Go\Go;
+use Herrera\Service\Process\Process;
+use Symfony\Component\Console\Input\InputInterface;
+
+if (Phar::running()) {
+    throw new RuntimeException(
+        'Do not run this task file using go.phar'
+    );
+}
+
+task(
+    'build',
+    'Builds the PHP archive',
+    function () {
+        $process = new Process('box');
+
+        return $process
+               ->arg('build')
+               ->error($process->stream(STDERR))
+               ->output($process->stream(STDOUT))
+               ->run();
+    }
+);
+
+task(
+    'test',
+    'Runs the tests',
+    function (InputInterface $in) {
+        $process = new Process('bin/phpunit');
+
+        if ($in->getOption('coverage')) {
+            $process
+                ->arg('--coverage-html')
+                ->arg('coverage');
+        }
+
+        return $process
+            ->arg('--verbose')
+            ->error($process->stream(STDERR))
+            ->output($process->stream(STDOUT))
+            ->run();
+    }
+);
+
+option('coverage', 'c', OPT_NO_VALUE, 'Generate code coverage.');
