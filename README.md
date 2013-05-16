@@ -1,110 +1,54 @@
-Go
-====
+Version
+=======
 
-[![Build Status](https://travis-ci.org/herrera-io/php-go.png?branch=master)](https://travis-ci.org/herrera-io/php-go)
+[![Build Status]](http://travis-ci.org/herrera-io/php-go)
 
-A simple PHP build tool.
+Go is a simple PHP build tool built on [Symfony Console][].
 
-Summary
--------
-
-Go is a simple build tool inspired by [Cake](http://coffeescript.org/documentation/docs/cake.html).
-
-Installation
-------------
-
-You may add Go as a Composer dependency:
-
-```sh
-$ php composer.phar require herrera-io/go=1.*
-```
-
-And run it from your bin directory:
-
-```sh
-$ bin/go
-```
-
-Or you may download it [as a PHAR](https://bitbucket.org/kherge/php-go/downloads/).
-
-Phar
-----
-
-To build your own Phar for Go, you will need to use [Box](http://box-project.org/):
-
-```sh
-$ php box.phar build
-```
-
-Usage
------
-
-To use Go, you will need to create a Gofile:
+**Gofile**:
 
 ```php
 <?php
 
-$task('hello', 'Just want to say hello!', function ($input, $output) {
-    $output->writeln(sprintf(
-        'Hello, <info>%s</info>!',
-        $input->getArgument('name') ?: 'Guest'
-    ));
-})->addArgument('name');
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-$task('test', 'Test using PHPUnit', function () use ($go) {
-    $process = $go['process']('bin/phpunit');
+// create our task
+task(
+    'hello',
+    'Say hello',
+    function (InputInterface $input, OutputInterface $output) {
+        $output->writeln(
+            sprintf(
+                'Hello, %s%s',
+                $input->getArgument('name'),
+                $input->getOption('ending')
+            )
+        );
+    }
+);
 
-    return $process->error($process->stream(STDERR))
-                   ->output($process->stream(STDOUT))
-                   ->run();
-});
+// add an argument to the task
+arg('name', ARG_IS_OPTIONAL, 'Your name', 'world');
+
+// add an option to the task
+option('ending', 'e', OPT_IS_OPTIONAL, 'How to end', '!');
 ```
-
-You may then either list the available tasks by running Go without arguments,
-
-```sh
-$ bin/go
-Go version 1.0.0
-
-Usage:
-  [options] command [arguments]
-
-Options:
-  --help           -h Display this help message.
-  --quiet          -q Do not output any message.
-  --verbose        -v Increase verbosity of messages.
-  --version        -V Display this application version.
-  --ansi              Force ANSI output.
-  --no-ansi           Disable ANSI output.
-  --no-interaction -n Do not ask any interactive question.
-
-Available commands:
-  hello   Just want to say hello!
-  help    Displays help for a command
-  list    Lists commands
-  test    Test using PHPUnit
-```
-
-display the help screen for a particular task,
-
-```sh
-$ bin/go help hello
-Usage:
- hello [name]
-
-Arguments:
- name
-
-Help:
- Just want to say hello!
-
-```
-
-or run a particular task.
 
 ```sh
 $ bin/go hello
-Hello, Guest!
-$ bin/go hello User
-Hello, User!
+Hello, world!
+$ bin/go hello Kevin -e .
+Hello, Kevin.
 ```
+
+Documentation
+-------------
+
+- [Installing][]
+- [Usage][]
+
+[Build Status]: https://secure.travis-ci.org/herrera-io/php-go.png?branch=master
+[Symfony Console]: http://symfony.com/doc/current/components/console/introduction.html
+[Installing]: doc/00-Installing.md
+[Usage]: doc/01-Usage.md
