@@ -1,5 +1,5 @@
-Version
-=======
+Go
+==
 
 [![Build Status]](http://travis-ci.org/herrera-io/php-go)
 
