@@ -16,6 +16,8 @@
             "exclude": [
                 "phpunit",
                 "phpunit-test-case",
+                "process",
+                "service-process",
                 "Tests",
                 "tests",
                 "yaml"
