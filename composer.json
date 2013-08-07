@@ -16,14 +16,14 @@
     },
     "require": {
         "php": ">=5.3.3",
-        "herrera-io/cli-app": "1.*",
-        "herrera-io/service-update": "1.*"
+        "herrera-io/cli-app": "~2.0",
+        "herrera-io/service-update": "~1.0"
     },
     "require-dev": {
         "ext-phar": "*",
-        "herrera-io/phpunit-test-case": "1.*",
-        "herrera-io/service-process": "1.*",
-        "phpunit/phpunit": "3.7.*"
+        "herrera-io/phpunit-test-case": "~1.0",
+        "herrera-io/service-process": "~1.0",
+        "phpunit/phpunit": "~3.7"
     },
     "autoload": {
         "files": ["src/lib/functions.php"],
