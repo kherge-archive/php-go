@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Creates commands from tasks listed in a Pakefile.
+ * Creates commands from tasks listed in a Gofile.
  *
  * @author Kevin Herrera <kevin@herrera.io>
  */
@@ -29,9 +29,17 @@ class Go extends Application
     /**
      * @override
      */
-    public function __construct($name = 'Go', $version = '@git_version@')
+    public function __construct(array $container = array())
     {
-        parent::__construct($name, $version);
+        parent::__construct(
+            array_merge(
+                array(
+                    'app.name' => 'Go',
+                    'app.version' => '@git_version@'
+                ),
+                $container
+            )
+        );
 
         /** @var $console Console */
         $console = $this['console'];
@@ -83,7 +91,7 @@ class Go extends Application
             ) use ($app) {
                 $output->writeln('Looking for updates...');
 
-                /** @var $updated Console */
+                /** @var Console $updated */
                 $console = $app['console'];
                 $updated = $app['update'](
                     $console->getVersion(),
