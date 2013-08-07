@@ -7,8 +7,8 @@
     },
     {
         "name": "go.phar",
-        "sha1": "01eae6adfbebb4e5464be127c89481c91efc6fed",
-        "url": "https://github.com/herrera-io/php-go/releases/download/2.0.1/go-2.0.1.phar",
-        "version": "2.0.1"
+        "sha1": "0311716bdf7c0428bbf687cc5d1704d19b088aa6",
+        "url": "https://github.com/herrera-io/php-go/releases/download/2.1.0/go-2.1.0.phar",
+        "version": "2.1.0"
     }
 ]
