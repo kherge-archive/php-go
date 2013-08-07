@@ -47,26 +47,30 @@ function load_composer_classloader($dir = null, $skip = 0)
     } while ($dir !== ($up = dirname($dir)));
 
     if (empty($path)) {
-        throw new RuntimeException (
+        throw new RuntimeException(
             'The composer.json file could not be found.'
         );
     }
 
     if (false === ($json = file_get_contents($path))) {
-        throw new RuntimeException(sprintf(
-            'The file "%s" could not be read.',
-            $path
-        ));
+        throw new RuntimeException(
+            sprintf(
+                'The file "%s" could not be read.',
+                $path
+            )
+        );
     }
 
     $json = json_decode($json);
 
     if (JSON_ERROR_NONE !== ($code = json_last_error())) {
-        throw new RuntimeException(sprintf(
-            'The file "%s" could not be parsed [%d].',
-            $path,
-            $code
-        ));
+        throw new RuntimeException(
+            sprintf(
+                'The file "%s" could not be parsed [%d].',
+                $path,
+                $code
+            )
+        );
     }
 
     $path = dirname($path);
@@ -80,9 +84,11 @@ function load_composer_classloader($dir = null, $skip = 0)
     $path .= DIRECTORY_SEPARATOR . 'autoload.php';
 
     if (false === file_exists($path)) {
-        throw RuntimeException::create(
-            'The Composer class loader "%s" could not be found.',
-            $path
+        throw new RuntimeException(
+            sprintf(
+                'The Composer class loader "%s" could not be found.',
+                $path
+            )
         );
     }
 
