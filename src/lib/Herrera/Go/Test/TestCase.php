@@ -4,7 +4,6 @@ namespace Herrera\Go\Test;
 
 use Herrera\Go\Go;
 use Herrera\PHPUnit\TestCase as Base;
-use OutOfRangeException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
