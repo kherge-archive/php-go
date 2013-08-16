@@ -1,7 +1,9 @@
 <?php
 
 use Herrera\Go\Go;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -82,6 +84,41 @@ function option(
     $task = Go::get('go.last_task');
 
     $task->addOption($name, $shortcut, $mode, $description, $value);
+}
+
+/**
+ * Runs another task.
+ *
+ * @param string $name      The name of the task.
+ * @param array  $arguments The arguments for the task.
+ *
+ * @return integer The status code.
+ */
+function run($name, array $arguments = array())
+{
+    /** @var Application $console */
+    $console = Go::get('console');
+
+    /** @var OutputInterface $output */
+    $output = Go::get('console.output');
+
+    $autoExit = new ReflectionProperty($console, 'autoExit');
+    $autoExit->setAccessible(true);
+
+    $autoExit = $autoExit->getValue($console);
+
+    $console->setAutoExit(false);
+
+    $arguments['command'] = $name;
+
+    $status = $console->run(
+        new ArrayInput($arguments),
+        $output
+    );
+
+    $console->setAutoExit($autoExit);
+
+    return $status;
 }
 
 /**

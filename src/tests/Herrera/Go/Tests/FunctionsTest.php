@@ -5,6 +5,7 @@ namespace Herrera\Go;
 use Herrera\Go\Go;
 use Herrera\Go\Test\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class FunctionsTest extends TestCase
@@ -77,6 +78,29 @@ class FunctionsTest extends TestCase
         $this->assertEquals('t', $opt->getShortcut());
         $this->assertEquals('test argument', $opt->getDescription());
         $this->assertEquals(array('default'), $opt->getDefault());
+    }
+
+    public function testRun()
+    {
+        $this
+            ->go
+            ->add(
+                'test',
+                function (InputInterface $in) {
+                    return (int) $in->getOption('status');
+                }
+            )
+            ->addOption('status', null, InputOption::VALUE_REQUIRED);
+
+        $this->assertEquals(
+            123,
+            run(
+                'test',
+                array(
+                    '--status' => 123
+                )
+            )
+        );
     }
 
     public function testTask()
