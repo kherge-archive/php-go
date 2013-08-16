@@ -72,7 +72,7 @@ task(
     'hello',
     'Say hello',
     function (In $in) {
-        printf("Hello, %s!\n", $input->getArgument('name'));
+        printf("Hello, %s!\n", $in->getArgument('name'));
     }
 );
 
