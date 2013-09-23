@@ -140,7 +140,7 @@ task(
 );
 ```
 
-> You may want to read up on what the [Console output][] manger can do.
+> You may want to read up on what the [Console output][] manager can do.
 
 Advanced Functionality
 ----------------------
