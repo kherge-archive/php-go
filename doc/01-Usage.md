@@ -100,9 +100,6 @@ Hello, User!
 
 ```php
 <?php
-```
-
-```sh
 
 use Symfony\Console\Component\Input\InputInterface as In;
 
