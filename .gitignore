@@ -3,8 +3,6 @@
 /coverage/
 /src/vendors/
 
-!/bin/go.phar
-
 /*.iml
 /*.phar
 /composer.lock
