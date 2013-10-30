@@ -23,7 +23,8 @@
         "ext-phar": "*",
         "herrera-io/phpunit-test-case": "~1.0",
         "herrera-io/service-process": "~1.0",
-        "phpunit/phpunit": "~3.7"
+        "phpunit/phpunit": "~3.7",
+        "symfony/process": "~2.1"
     },
     "autoload": {
         "files": ["src/lib/functions.php"],
