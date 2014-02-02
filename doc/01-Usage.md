@@ -130,7 +130,7 @@ use Symfony\Component\Console\Output\OutputInterface as Out;
 
 task(
     'pretty',
-    'Prints a colorful word'.
+    'Prints a colorful word',
     function (Out $out) {
         $out->writeln('<info>Pretty!</info>');
     }
